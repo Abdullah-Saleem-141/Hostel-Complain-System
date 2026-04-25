@@ -41,6 +41,18 @@
 
     <build>
         <plugins>
+            <!-- Compiler Plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.11.0</version>
+            </plugin>
+            <!-- War Plugin - Essential for modern Java versions -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>3.3.2</version>
+            </plugin>
             <!-- Tomcat 7 Maven Plugin for easy running -->
             <plugin>
                 <groupId>org.apache.tomcat.maven</groupId>
