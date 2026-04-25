@@ -1,0 +1,52 @@
+===========================================================
+NOOR ENTERPRISES - HOSTEL COMPLAINT PORTAL
+OWNER'S HANDOVER & SETUP GUIDE
+===========================================================
+
+This project is a professional web-based system for managing 
+hostel complaints. It is connected to a secure cloud database
+(Supabase), so no local database installation is required.
+
+-----------------------------------------------------------
+1. SYSTEM REQUIREMENTS
+-----------------------------------------------------------
+- Windows 10 or 11
+- Java JDK 17 or higher installed 
+  (Download from: https://www.oracle.com/java/technologies/downloads/)
+
+-----------------------------------------------------------
+2. HOW TO START THE SYSTEM
+-----------------------------------------------------------
+1. Open the project folder (Complain portal).
+2. Right-click on the file named "start.ps1".
+3. Select "Run with PowerShell".
+4. Wait for the window to say: 
+   'Starting ProtocolHandler [http-bio-8080]'
+5. Open your web browser and go to: 
+   http://localhost:8080
+
+-----------------------------------------------------------
+3. ADMIN ACCESS
+-----------------------------------------------------------
+- ADMIN USERNAME: Noor Enterprise
+- ADMIN PASSWORD: NoorEnterprise839
+
+-----------------------------------------------------------
+4. KEY FEATURES FOR OWNER
+-----------------------------------------------------------
+- Dashboard Analytics: See at a glance how many issues are pending.
+- Urgency Alerts: High-urgency complaints will pulse red.
+- Manage Hostels: Add new hostels or rename existing ones.
+- Secure Profile: Change your admin password in the settings.
+
+-----------------------------------------------------------
+5. PUBLIC ACCESS & QR CODE
+-----------------------------------------------------------
+To let students use this from their phones:
+1. Host this folder on a cloud service like Render.com or Heroku.
+2. Get the public URL (e.g., https://my-hostel.render.com).
+3. Go to any "QR Code Generator" website and paste your URL.
+4. Print the QR code and place it in the hostel halls.
+
+Thank you for choosing Noor Enterprises!
+===========================================================
