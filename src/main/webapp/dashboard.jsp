@@ -18,6 +18,13 @@
     
     // Super Admin check: If hostelId is 1, they are the Master Admin (Noor Hostels)
     boolean isSuperAdmin = (hostelId == 1);
+
+    // Timezone Formatting for Pakistan (PKT)
+    java.util.TimeZone tz = java.util.TimeZone.getTimeZone("Asia/Karachi");
+    java.text.SimpleDateFormat sdfDateTime = new java.text.SimpleDateFormat("MMM dd, hh:mm a");
+    java.text.SimpleDateFormat sdfDate = new java.text.SimpleDateFormat("MMM dd, yyyy");
+    sdfDateTime.setTimeZone(tz);
+    sdfDate.setTimeZone(tz);
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -196,7 +203,7 @@
                                         <div class="d-flex justify-content-between align-items-start">
                                             <h5 class="fw-bold mb-0 text-primary">Room <%= c.getRoomNo() %></h5>
                                             <div class="text-end me-5">
-                                                <small class="text-muted d-block" style="font-size: 0.7rem;"><%= new java.text.SimpleDateFormat("MMM dd, hh:mm a").format(c.getCreatedAt()) %></small>
+                                                <small class="text-muted d-block" style="font-size: 0.7rem;"><%= sdfDateTime.format(c.getCreatedAt()) %></small>
                                             </div>
                                         </div>
                                     </div>
@@ -264,7 +271,7 @@
                                                     <td class="fw-bold">R-<%= h.getRoomNo() %></td>
                                                     <td><%= h.getStudentName() %></td>
                                                     <td><small><%= h.getDescription() %></small></td>
-                                                    <td><span class="badge bg-light text-dark"><%= new java.text.SimpleDateFormat("MMM dd, yyyy").format(h.getResolvedAt()) %></span></td>
+                                                    <td><span class="badge bg-light text-dark"><%= sdfDate.format(h.getResolvedAt()) %></span></td>
                                                 </tr>
                                             <% } %>
                                         </tbody>
@@ -287,7 +294,7 @@
                                     <div class="p-3 border-bottom mb-2 history-row">
                                         <div class="d-flex justify-content-between">
                                             <span class="fw-bold text-danger">Deleted Request #<%= log.getComplaintId() %></span>
-                                            <small class="text-muted"><%= new java.text.SimpleDateFormat("MMM dd").format(log.getDeletedAt()) %></small>
+                                            <small class="text-muted"><%= sdfDateTime.format(log.getDeletedAt()) %></small>
                                         </div>
                                         <div class="mt-1"><small><strong>By:</strong> <%= log.getAdminName() %></small></div>
                                         <div class="mt-1"><small><strong>From:</strong> <%= log.getStudentName() %> (Room <%= log.getRoomNo() %>)</small></div>

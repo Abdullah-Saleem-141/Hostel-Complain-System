@@ -9,6 +9,13 @@
         return;
     }
     String studentName = (String) session.getAttribute("studentName");
+
+    // Timezone Formatting for Pakistan (PKT)
+    java.util.TimeZone tz = java.util.TimeZone.getTimeZone("Asia/Karachi");
+    java.text.SimpleDateFormat sdfDate = new java.text.SimpleDateFormat("MMM dd, yyyy");
+    java.text.SimpleDateFormat sdfTime = new java.text.SimpleDateFormat("hh:mm a");
+    sdfDate.setTimeZone(tz);
+    sdfTime.setTimeZone(tz);
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -158,8 +165,8 @@
                                             %>
                                                 <tr>
                                                     <td>
-                                                        <small class="text-muted"><%= new java.text.SimpleDateFormat("MMM dd, yyyy").format(c.getCreatedAt()) %></small><br>
-                                                        <small class="text-muted"><%= new java.text.SimpleDateFormat("hh:mm a").format(c.getCreatedAt()) %></small>
+                                                        <small class="text-muted"><%= sdfDate.format(c.getCreatedAt()) %></small><br>
+                                                        <small class="text-muted"><%= sdfTime.format(c.getCreatedAt()) %></small>
                                                     </td>
                                                     <td>
                                                         <%= c.getDescription() %><br>
