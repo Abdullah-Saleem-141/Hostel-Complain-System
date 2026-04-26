@@ -68,8 +68,6 @@ public class ComplaintDAO {
     // 2. Fetch pending complaints for a specific hostel (For Admin Dashboard)
     public List<Complaint> getPendingComplaintsByHostel(int hostelId) {
         List<Complaint> complaints = new ArrayList<>();
-        // Fetch complaints where student hasn't confirmed yet (or maybe admin hasn't)
-        // Usually, a complaint is pending if admin hasn't fixed it.
         String sql = "SELECT c.*, h.name as hostel_name FROM complaints c " +
                      "JOIN hostels h ON c.hostel_id = h.id " +
                      "WHERE c.hostel_id = ? AND c.student_confirmed = FALSE ORDER BY c.created_at DESC";
@@ -81,25 +79,52 @@ public class ComplaintDAO {
             ResultSet rs = stmt.executeQuery();
             
             while (rs.next()) {
-                Complaint c = new Complaint();
-                c.setId(rs.getInt("id"));
-                c.setStudentId(rs.getInt("student_id"));
-                c.setHostelId(rs.getInt("hostel_id"));
-                c.setHostelName(rs.getString("hostel_name"));
-                c.setRoomNo(rs.getString("room_no"));
-                c.setStudentName(rs.getString("student_name"));
-                c.setDescription(rs.getString("description"));
-                c.setUrgency(rs.getString("urgency"));
-                c.setAdminConfirmed(rs.getBoolean("admin_confirmed"));
-                c.setStudentConfirmed(rs.getBoolean("student_confirmed"));
-                c.setCreatedAt(rs.getTimestamp("created_at"));
-                c.setResolvedAt(rs.getTimestamp("resolved_at"));
+                Complaint c = mapResultSetToComplaint(rs);
                 complaints.add(c);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return complaints;
+    }
+
+    // 2b. Fetch ALL pending complaints (For Super Admin)
+    public List<Complaint> getAllPendingComplaints() {
+        List<Complaint> complaints = new ArrayList<>();
+        String sql = "SELECT c.*, h.name as hostel_name FROM complaints c " +
+                     "JOIN hostels h ON c.hostel_id = h.id " +
+                     "WHERE c.student_confirmed = FALSE ORDER BY c.created_at DESC";
+                     
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+             
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                Complaint c = mapResultSetToComplaint(rs);
+                complaints.add(c);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return complaints;
+    }
+
+    // Helper method to map ResultSet to Complaint object
+    private Complaint mapResultSetToComplaint(ResultSet rs) throws SQLException {
+        Complaint c = new Complaint();
+        c.setId(rs.getInt("id"));
+        c.setStudentId(rs.getInt("student_id"));
+        c.setHostelId(rs.getInt("hostel_id"));
+        c.setHostelName(rs.getString("hostel_name"));
+        c.setRoomNo(rs.getString("room_no"));
+        c.setStudentName(rs.getString("student_name"));
+        c.setDescription(rs.getString("description"));
+        c.setUrgency(rs.getString("urgency"));
+        c.setAdminConfirmed(rs.getBoolean("admin_confirmed"));
+        c.setStudentConfirmed(rs.getBoolean("student_confirmed"));
+        c.setCreatedAt(rs.getTimestamp("created_at"));
+        c.setResolvedAt(rs.getTimestamp("resolved_at"));
+        return c;
     }
 
     // 3. Search for a complaint by student name or room number (For Student Tracker)

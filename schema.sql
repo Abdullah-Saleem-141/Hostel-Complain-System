@@ -32,7 +32,7 @@ CREATE TABLE admins (
 
 -- Insert dummy admin data (Setting requested credentials for the main admin)
 INSERT INTO admins (username, password, hostel_id) VALUES 
-('Noor Enterprise', 'NoorEnterprise839', 1),
+('Noor Hostels', 'NoorEnterprise839', 1),
 ('admin_iqbal', 'NoorEnterprise839', 2),
 ('admin_sirsyed', 'NoorEnterprise839', 3),
 ('admin_liaquat', 'NoorEnterprise839', 4);

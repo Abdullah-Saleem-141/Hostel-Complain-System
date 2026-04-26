@@ -1,18 +1,17 @@
 ===========================================================
-NOOR ENTERPRISES - HOSTEL COMPLAINT PORTAL
+NOOR HOSTELS - HOSTEL COMPLAINT PORTAL
 OWNER'S HANDOVER & SETUP GUIDE
 ===========================================================
 
 This project is a professional web-based system for managing 
 hostel complaints. It is connected to a secure cloud database
-(Supabase), so no local database installation is required.
+(Supabase) with high-performance connection pooling.
 
 -----------------------------------------------------------
 1. SYSTEM REQUIREMENTS
 -----------------------------------------------------------
 - Windows 10 or 11
 - Java JDK 17 or higher installed 
-  (Download from: https://www.oracle.com/java/technologies/downloads/)
 
 -----------------------------------------------------------
 2. HOW TO START THE SYSTEM
@@ -28,25 +27,25 @@ hostel complaints. It is connected to a secure cloud database
 -----------------------------------------------------------
 3. ADMIN ACCESS
 -----------------------------------------------------------
-- ADMIN USERNAME: Noor Enterprise
+- ADMIN USERNAME: Noor Hostels
 - ADMIN PASSWORD: NoorEnterprise839
 
 -----------------------------------------------------------
 4. KEY FEATURES FOR OWNER
 -----------------------------------------------------------
-- Dashboard Analytics: See at a glance how many issues are pending.
-- Urgency Alerts: High-urgency complaints will pulse red.
-- Manage Hostels: Add new hostels or rename existing ones.
-- Secure Profile: Change your admin password in the settings.
+- Super Admin Feed: "Noor Hostels" account can see complaints from ALL hostels.
+- Instant Updates: Mark issues as resolved using AJAX without page reloads.
+- Visual Timeline: Track complaint progress from "Sent" to "Finished".
+- Performance: Powered by HikariCP for fast data handling.
+- Modern UI: Attractive animations and glassmorphism design.
 
 -----------------------------------------------------------
 5. PUBLIC ACCESS & QR CODE
 -----------------------------------------------------------
 To let students use this from their phones:
-1. Host this folder on a cloud service like Render.com or Heroku.
-2. Get the public URL (e.g., https://my-hostel.render.com).
-3. Go to any "QR Code Generator" website and paste your URL.
-4. Print the QR code and place it in the hostel halls.
+1. Host this folder on a cloud service.
+2. Get the public URL.
+3. Print the QR code and place it in the hostel halls.
 
-Thank you for choosing Noor Enterprises!
+Thank you for choosing Noor Hostels!
 ===========================================================

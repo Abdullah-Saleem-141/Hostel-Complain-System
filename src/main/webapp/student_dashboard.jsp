@@ -15,19 +15,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Dashboard - Noor Enterprises</title>
+    <title>Student Dashboard - Noor Hostels</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="css/style.css">
+    <style>
+        body { font-family: 'Outfit', sans-serif; background-color: #f8faff; }
+        .navbar { background: #4f46e5 !important; }
+        .glass-card { 
+            background: rgba(255, 255, 255, 0.8); 
+            backdrop-filter: blur(10px); 
+            border: 1px solid rgba(255, 255, 255, 0.3); 
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.07);
+        }
+        .status-timeline { display: flex; justify-content: space-between; margin-top: 10px; position: relative; }
+        .status-step { flex: 1; text-align: center; font-size: 0.65rem; position: relative; color: #cbd5e1; }
+        .status-step.active { color: #4f46e5; font-weight: 600; }
+        .status-step.completed { color: #10b981; }
+        .status-step::after { 
+            content: ''; height: 2px; width: 100%; background: #e2e8f0; 
+            position: absolute; top: -10px; left: 50%; z-index: 1;
+        }
+        .status-step:last-child::after { display: none; }
+        .status-step .dot { 
+            width: 10px; height: 10px; background: #e2e8f0; border-radius: 50%; 
+            margin: 0 auto 5px; position: relative; z-index: 2; top: -14px;
+        }
+        .status-step.active .dot { background: #4f46e5; box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.2); }
+        .status-step.completed .dot { background: #10b981; }
+        .nav-tabs { border: none; gap: 10px; }
+        .nav-link { border: none !important; border-radius: 12px !important; padding: 10px 20px !important; color: #64748b !important; }
+        .nav-link.active { background: #4f46e5 !important; color: white !important; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2); }
+        .form-control, .form-select { border-radius: 12px; padding: 12px; }
+        .btn-primary { background: #4f46e5; border: none; border-radius: 12px; padding: 12px; }
+    </style>
 </head>
-<body class="bg-light">
+<body class="bg-light animate__animated animate__fadeIn">
 
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top shadow-sm">
         <div class="container">
-            <a class="navbar-brand brand-logo" href="#">
-                <i class="bi bi-building"></i> Noor Enterprises - Student Panel
+            <a class="navbar-brand brand-logo fw-bold" href="#">
+                <i class="bi bi-building-fill me-2"></i>Noor Hostels - Student Panel
             </a>
             <div class="d-flex align-items-center">
                 <span class="text-white me-3">Welcome, <%= studentName %>!</span>
@@ -69,7 +102,7 @@
                 <div class="row">
                     <!-- Submit Complaint Form -->
                     <div class="col-md-4 mb-4">
-                        <div class="card shadow-sm border-0">
+                        <div class="card glass-card border-0">
                             <div class="card-header bg-white border-bottom-0 pt-4 pb-0">
                                 <h5 class="fw-bold text-primary"><i class="bi bi-plus-circle me-2"></i>New Complaint</h5>
                             </div>
@@ -95,7 +128,7 @@
 
                     <!-- My Complaints List -->
                     <div class="col-md-8">
-                        <div class="card shadow-sm border-0">
+                        <div class="card glass-card border-0">
                             <div class="card-header bg-white border-bottom-0 pt-4 pb-0">
                                 <h5 class="fw-bold text-primary"><i class="bi bi-list-task me-2"></i>My Complaints</h5>
                             </div>
@@ -138,11 +171,29 @@
                                                         <span class="badge <%= urgencyClass %>" style="font-size: 0.7rem;"><%= c.getUrgency() %></span>
                                                     </td>
                                                     <td>
-                                                        <% if (c.isAdminConfirmed()) { %>
-                                                            <span class="badge bg-success">Resolved by Admin</span>
+                                                        <% if (c.isStudentConfirmed()) { %>
+                                                            <span class="badge bg-secondary">Closed</span>
+                                                        <% } else if (c.isAdminConfirmed()) { %>
+                                                            <span class="badge bg-success animate__animated animate__pulse animate__infinite">Resolved by Admin</span>
                                                         <% } else { %>
                                                             <span class="badge bg-warning text-dark">Pending</span>
                                                         <% } %>
+                                                        
+                                                        <!-- Status Timeline -->
+                                                        <div class="status-timeline mt-3">
+                                                            <div class="status-step completed">
+                                                                <div class="dot"></div>
+                                                                Sent
+                                                            </div>
+                                                            <div class="status-step <%= c.isAdminConfirmed() ? "completed" : "active" %>">
+                                                                <div class="dot"></div>
+                                                                In Progress
+                                                            </div>
+                                                            <div class="status-step <%= c.isStudentConfirmed() ? "completed" : (c.isAdminConfirmed() ? "active" : "") %>">
+                                                                <div class="dot"></div>
+                                                                Finished
+                                                            </div>
+                                                        </div>
                                                     </td>
                                                     <td>
                                                         <% if (c.isAdminConfirmed() && !c.isStudentConfirmed()) { %>
@@ -200,5 +251,6 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/complaintActions.js"></script>
 </body>
 </html>

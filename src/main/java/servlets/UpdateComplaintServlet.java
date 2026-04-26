@@ -17,25 +17,29 @@ public class UpdateComplaintServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String action = request.getParameter("action");
         String complaintIdStr = request.getParameter("complaintId");
+        boolean isAjax = "XMLHttpRequest".equals(request.getHeader("X-Requested-With"));
         
+        boolean success = false;
         if (complaintIdStr != null && !complaintIdStr.isEmpty()) {
             int complaintId = Integer.parseInt(complaintIdStr);
             
             if ("admin_fix".equals(action)) {
-                // Admin marks as fixed
-                complaintDAO.markAsFixedByAdmin(complaintId);
-                response.sendRedirect("dashboard.jsp?msg=Complaint marked as resolved");
+                success = complaintDAO.markAsFixedByAdmin(complaintId);
+                if (!isAjax) response.sendRedirect("dashboard.jsp?msg=Complaint marked as resolved");
             } else if ("admin_unresolve".equals(action)) {
-                // Admin marks as unresolved
-                complaintDAO.markAsUnresolvedByAdmin(complaintId);
-                response.sendRedirect("dashboard.jsp?msg=Complaint marked as unresolved");
+                success = complaintDAO.markAsUnresolvedByAdmin(complaintId);
+                if (!isAjax) response.sendRedirect("dashboard.jsp?msg=Complaint marked as unresolved");
             } else if ("student_confirm".equals(action)) {
-                // Student confirms fix
-                complaintDAO.confirmFixByStudent(complaintId);
-                response.sendRedirect("student_dashboard.jsp?msg=Thank you for confirming the resolution");
+                success = complaintDAO.confirmFixByStudent(complaintId);
+                if (!isAjax) response.sendRedirect("student_dashboard.jsp?msg=Thank you for confirming the resolution");
             }
-        } else {
-            response.sendRedirect("index.jsp"); // Fallback
+        }
+
+        if (isAjax) {
+            response.setContentType("application/json");
+            response.getWriter().write("{\"success\": " + success + "}");
+        } else if (complaintIdStr == null) {
+            response.sendRedirect("index.jsp");
         }
     }
 }

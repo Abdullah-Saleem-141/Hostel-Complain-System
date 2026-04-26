@@ -20,18 +20,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - Noor Enterprises</title>
+    <title>Admin Dashboard - Noor Hostels</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="css/style.css">
+    <style>
+        body { font-family: 'Outfit', sans-serif; background-color: #f0f2f5; }
+        .navbar { background: rgba(33, 37, 41, 0.9) !important; backdrop-filter: blur(10px); }
+        .glass-card { 
+            background: rgba(255, 255, 255, 0.7); 
+            backdrop-filter: blur(15px); 
+            border: 1px solid rgba(255, 255, 255, 0.3); 
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+        .glass-card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.1); }
+        .nav-tabs { border: none; gap: 10px; }
+        .nav-link { 
+            border: none !important; 
+            border-radius: 12px !important; 
+            padding: 12px 24px !important;
+            color: #64748b !important;
+            transition: all 0.3s;
+        }
+        .nav-link.active { 
+            background: #4f46e5 !important; 
+            color: white !important; 
+            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+        }
+        .stats-icon { width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 14px; }
+        .complaint-card { border-radius: 20px; overflow: hidden; border: none; }
+        .btn-success { background: #10b981; border: none; border-radius: 12px; padding: 10px; }
+        .btn-warning { background: #f59e0b; border: none; border-radius: 12px; padding: 10px; }
+    </style>
 </head>
 <body class="bg-light">
 
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top shadow-sm">
         <div class="container-fluid px-4">
             <a class="navbar-brand fw-bold" href="#">
-                <i class="bi bi-buildings"></i> Noor Enterprises Admin
+                <i class="bi bi-buildings-fill me-2"></i>Noor Hostels Admin
             </a>
             <div class="d-flex align-items-center">
                 <span class="text-light me-3">Welcome, <strong><%= adminUsername %></strong></span>
@@ -76,7 +107,12 @@
                 
                 <%
                     ComplaintDAO dao = new ComplaintDAO();
-                    List<Complaint> allComplaints = dao.getPendingComplaintsByHostel(hostelId); // In a real app, this might be filtered
+                    List<Complaint> allComplaints;
+                    if ("Noor Hostels".equals(adminUsername)) {
+                        allComplaints = dao.getAllPendingComplaints();
+                    } else {
+                        allComplaints = dao.getPendingComplaintsByHostel(hostelId);
+                    }
                     
                     int total = allComplaints.size();
                     int highUrgency = 0;
@@ -90,9 +126,9 @@
                 <!-- Summary Cards -->
                 <div class="row g-4 mb-4">
                     <div class="col-md-4">
-                        <div class="card border-0 shadow-sm rounded-4 bg-white">
-                            <div class="card-body d-flex align-items-center">
-                                <div class="bg-primary bg-opacity-10 p-3 rounded-3 me-3">
+                        <div class="card glass-card shadow-sm border-0 animate__animated animate__zoomIn">
+                            <div class="card-body d-flex align-items-center p-4">
+                                <div class="stats-icon bg-primary bg-opacity-10 me-3">
                                     <i class="bi bi-list-task text-primary fs-4"></i>
                                 </div>
                                 <div>
@@ -103,9 +139,9 @@
                         </div>
                     </div>
                     <div class="col-md-4">
-                        <div class="card border-0 shadow-sm rounded-4 bg-white">
-                            <div class="card-body d-flex align-items-center">
-                                <div class="bg-danger bg-opacity-10 p-3 rounded-3 me-3">
+                        <div class="card glass-card shadow-sm border-0 animate__animated animate__zoomIn" style="animation-delay: 0.1s;">
+                            <div class="card-body d-flex align-items-center p-4">
+                                <div class="stats-icon bg-danger bg-opacity-10 me-3">
                                     <i class="bi bi-exclamation-octagon text-danger fs-4"></i>
                                 </div>
                                 <div>
@@ -116,13 +152,13 @@
                         </div>
                     </div>
                     <div class="col-md-4">
-                        <div class="card border-0 shadow-sm rounded-4 bg-white">
-                            <div class="card-body d-flex align-items-center">
-                                <div class="bg-success bg-opacity-10 p-3 rounded-3 me-3">
+                        <div class="card glass-card shadow-sm border-0 animate__animated animate__zoomIn" style="animation-delay: 0.2s;">
+                            <div class="card-body d-flex align-items-center p-4">
+                                <div class="stats-icon bg-success bg-opacity-10 me-3">
                                     <i class="bi bi-check-all text-success fs-4"></i>
                                 </div>
                                 <div>
-                                    <h6 class="text-muted mb-0">Fixed (Pending Student)</h6>
+                                    <h6 class="text-muted mb-0">Fixed (Pending)</h6>
                                     <h3 class="fw-bold mb-0 text-success"><%= resolvedCount %></h3>
                                 </div>
                             </div>
@@ -141,7 +177,13 @@
                             }
                         }
                     %>
-                    <h4 class="fw-bold text-dark">Recent Activity for <%= currentHostelName %></h4>
+                    <h4 class="fw-bold text-dark">
+                        <% if ("Noor Hostels".equals(adminUsername)) { %>
+                            Master Feed (All Hostels)
+                        <% } else { %>
+                            Recent Activity for <%= currentHostelName %>
+                        <% } %>
+                    </h4>
                     
                     <div class="d-flex">
                         <input type="text" id="searchInput" class="form-control form-control-sm me-2" style="width: 250px;" placeholder="Search Room or Name...">
@@ -305,6 +347,7 @@
     </style>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/complaintActions.js"></script>
     <script>
         // Live Search Filter
         document.getElementById('searchInput').addEventListener('keyup', function() {
