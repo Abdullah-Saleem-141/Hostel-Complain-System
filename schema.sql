@@ -71,3 +71,13 @@ CREATE TABLE complaints (
 INSERT INTO complaints (student_id, hostel_id, room_no, student_name, description) VALUES 
 (1, 1, '101A', 'Ali Raza', 'Fan is not working in the room.'),
 (2, 2, '205B', 'Fatima Noor', 'Water leakage in the attached washroom.');
+-- 5. Create the deletion_logs table
+CREATE TABLE IF NOT EXISTS deletion_logs (
+    id SERIAL PRIMARY KEY,
+    complaint_id INT,
+    admin_name VARCHAR(100),
+    student_name VARCHAR(100),
+    room_no VARCHAR(20),
+    description TEXT,
+    deleted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

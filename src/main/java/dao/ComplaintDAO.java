@@ -1,6 +1,7 @@
 package dao;
 
 import models.Complaint;
+import models.DeletionLog;
 import utils.DBConnection;
 
 import java.sql.*;
@@ -44,20 +45,7 @@ public class ComplaintDAO {
             stmt.setInt(1, studentId);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
-                Complaint c = new Complaint();
-                c.setId(rs.getInt("id"));
-                c.setStudentId(rs.getInt("student_id"));
-                c.setHostelId(rs.getInt("hostel_id"));
-                c.setHostelName(rs.getString("hostel_name"));
-                c.setRoomNo(rs.getString("room_no"));
-                c.setStudentName(rs.getString("student_name"));
-                c.setDescription(rs.getString("description"));
-                c.setUrgency(rs.getString("urgency"));
-                c.setAdminConfirmed(rs.getBoolean("admin_confirmed"));
-                c.setStudentConfirmed(rs.getBoolean("student_confirmed"));
-                c.setCreatedAt(rs.getTimestamp("created_at"));
-                c.setResolvedAt(rs.getTimestamp("resolved_at"));
-                complaints.add(c);
+                complaints.add(mapResultSetToComplaint(rs));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -127,7 +115,7 @@ public class ComplaintDAO {
         return c;
     }
 
-    // 3. Search for a complaint by student name or room number (For Student Tracker)
+    // 3. Search for a complaint by student name or room number
     public List<Complaint> searchComplaints(String query) {
         List<Complaint> complaints = new ArrayList<>();
         String sql = "SELECT c.*, h.name as hostel_name FROM complaints c " +
@@ -143,18 +131,7 @@ public class ComplaintDAO {
             ResultSet rs = stmt.executeQuery();
             
             while (rs.next()) {
-                Complaint c = new Complaint();
-                c.setId(rs.getInt("id"));
-                c.setHostelId(rs.getInt("hostel_id"));
-                c.setHostelName(rs.getString("hostel_name"));
-                c.setRoomNo(rs.getString("room_no"));
-                c.setStudentName(rs.getString("student_name"));
-                c.setDescription(rs.getString("description"));
-                c.setUrgency(rs.getString("urgency"));
-                c.setAdminConfirmed(rs.getBoolean("admin_confirmed"));
-                c.setStudentConfirmed(rs.getBoolean("student_confirmed"));
-                c.setCreatedAt(rs.getTimestamp("created_at"));
-                complaints.add(c);
+                complaints.add(mapResultSetToComplaint(rs));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -201,5 +178,113 @@ public class ComplaintDAO {
             e.printStackTrace();
         }
         return isSuccess;
+    }
+
+    // 6. Delete a complaint and log it
+    public boolean deleteComplaint(int complaintId, String adminUsername) {
+        boolean isSuccess = false;
+        String fetchSql = "SELECT * FROM complaints WHERE id = ?";
+        String logSql = "INSERT INTO deletion_logs (complaint_id, admin_name, student_name, room_no, description) VALUES (?, ?, ?, ?, ?)";
+        String deleteSql = "DELETE FROM complaints WHERE id = ?";
+        
+        try (Connection conn = DBConnection.getConnection()) {
+            conn.setAutoCommit(false);
+            try {
+                String studentName = "";
+                String roomNo = "";
+                String description = "";
+                try (PreparedStatement fStmt = conn.prepareStatement(fetchSql)) {
+                    fStmt.setInt(1, complaintId);
+                    ResultSet rs = fStmt.executeQuery();
+                    if (rs.next()) {
+                        studentName = rs.getString("student_name");
+                        roomNo = rs.getString("room_no");
+                        description = rs.getString("description");
+                    }
+                }
+                
+                try (PreparedStatement lStmt = conn.prepareStatement(logSql)) {
+                    lStmt.setInt(1, complaintId);
+                    lStmt.setString(2, adminUsername);
+                    lStmt.setString(3, studentName);
+                    lStmt.setString(4, roomNo);
+                    lStmt.setString(5, description);
+                    lStmt.executeUpdate();
+                }
+                
+                try (PreparedStatement dStmt = conn.prepareStatement(deleteSql)) {
+                    dStmt.setInt(1, complaintId);
+                    isSuccess = dStmt.executeUpdate() > 0;
+                }
+                
+                conn.commit();
+            } catch (SQLException e) {
+                conn.rollback();
+                e.printStackTrace();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return isSuccess;
+    }
+
+    // 7. Fetch deletion history
+    public List<DeletionLog> getDeletionHistory() {
+        List<DeletionLog> logs = new ArrayList<>();
+        String sql = "SELECT * FROM deletion_logs ORDER BY deleted_at DESC";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                DeletionLog log = new DeletionLog();
+                log.setId(rs.getInt("id"));
+                log.setComplaintId(rs.getInt("complaint_id"));
+                log.setAdminName(rs.getString("admin_name"));
+                log.setStudentName(rs.getString("student_name"));
+                log.setRoomNo(rs.getString("room_no"));
+                log.setDescription(rs.getString("description"));
+                log.setDeletedAt(rs.getTimestamp("deleted_at"));
+                logs.add(log);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return logs;
+    }
+
+    // 8. Fetch Resolved History
+    public List<Complaint> getResolvedHistoryByHostel(int hostelId) {
+        List<Complaint> complaints = new ArrayList<>();
+        String sql = "SELECT c.*, h.name as hostel_name FROM complaints c " +
+                     "JOIN hostels h ON c.hostel_id = h.id " +
+                     "WHERE c.hostel_id = ? AND c.student_confirmed = TRUE ORDER BY c.resolved_at DESC";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, hostelId);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                complaints.add(mapResultSetToComplaint(rs));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return complaints;
+    }
+
+    public List<Complaint> getAllResolvedHistory() {
+        List<Complaint> complaints = new ArrayList<>();
+        String sql = "SELECT c.*, h.name as hostel_name FROM complaints c " +
+                     "JOIN hostels h ON c.hostel_id = h.id " +
+                     "WHERE c.student_confirmed = TRUE ORDER BY c.resolved_at DESC";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                complaints.add(mapResultSetToComplaint(rs));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return complaints;
     }
 }

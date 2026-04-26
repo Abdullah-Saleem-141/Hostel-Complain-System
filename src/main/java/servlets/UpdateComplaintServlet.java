@@ -32,6 +32,10 @@ public class UpdateComplaintServlet extends HttpServlet {
             } else if ("student_confirm".equals(action)) {
                 success = complaintDAO.confirmFixByStudent(complaintId);
                 if (!isAjax) response.sendRedirect("student_dashboard.jsp?msg=Thank you for confirming the resolution");
+            } else if ("admin_delete".equals(action)) {
+                String adminUsername = (String) request.getSession().getAttribute("adminUsername");
+                success = complaintDAO.deleteComplaint(complaintId, adminUsername != null ? adminUsername : "Unknown Admin");
+                if (!isAjax) response.sendRedirect("dashboard.jsp?msg=Complaint deleted successfully");
             }
         }
 
