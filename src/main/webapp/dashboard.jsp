@@ -282,7 +282,12 @@
                                                 <tr>
                                                     <td class="fw-bold">R-<%= h.getRoomNo() %></td>
                                                     <td><%= h.getStudentName() %></td>
-                                                    <td><small><%= h.getDescription() %></small></td>
+                                                    <td>
+                                                        <small><%= h.getDescription() %></small>
+                                                        <% if (h.getAdminComment() != null && !h.getAdminComment().isEmpty()) { %>
+                                                            <div class="mt-1"><small class="text-primary fw-bold">Note:</small> <small class="text-muted"><%= h.getAdminComment() %></small></div>
+                                                        <% } %>
+                                                    </td>
                                                     <td><span class="badge bg-light text-dark"><%= sdfDate.format(h.getResolvedAt()) %></span></td>
                                                 </tr>
                                             <% } %>
