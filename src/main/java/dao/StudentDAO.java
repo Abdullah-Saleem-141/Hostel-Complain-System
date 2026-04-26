@@ -11,8 +11,18 @@ import java.sql.SQLException;
 public class StudentDAO {
 
     public Student authenticate(String username, String password) {
+        if (username == null || password == null) return null;
+        
+        username = username.trim();
+        password = password.trim();
+        
         Student student = null;
-        String sql = "SELECT s.*, h.name as hostel_name FROM students s JOIN hostels h ON s.hostel_id = h.id WHERE s.username = ? AND s.password = ?";
+        // Use LEFT JOIN and LOWER() for case-insensitive username matching
+        String sql = "SELECT s.id, s.username, s.password, s.name, s.room_no, s.hostel_id, h.name as hostel_name " +
+                     "FROM students s " +
+                     "LEFT JOIN hostels h ON s.hostel_id = h.id " +
+                     "WHERE LOWER(s.username) = LOWER(?) AND s.password = ?";
+                     
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, username);
@@ -38,10 +48,10 @@ public class StudentDAO {
         String sql = "INSERT INTO students (username, password, name, room_no, hostel_id) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, student.getUsername());
-            stmt.setString(2, student.getPassword());
-            stmt.setString(3, student.getName());
-            stmt.setString(4, student.getRoomNo());
+            stmt.setString(1, student.getUsername().trim());
+            stmt.setString(2, student.getPassword().trim());
+            stmt.setString(3, student.getName().trim());
+            stmt.setString(4, student.getRoomNo().trim());
             stmt.setInt(5, student.getHostelId());
             int rowsAffected = stmt.executeUpdate();
             return rowsAffected > 0;
@@ -55,8 +65,8 @@ public class StudentDAO {
         String sql = "UPDATE students SET username = ?, password = ? WHERE id = ?";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, newUsername);
-            stmt.setString(2, newPassword);
+            stmt.setString(1, newUsername.trim());
+            stmt.setString(2, newPassword.trim());
             stmt.setInt(3, studentId);
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {

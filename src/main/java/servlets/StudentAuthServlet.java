@@ -20,8 +20,8 @@ public class StudentAuthServlet extends HttpServlet {
         String action = request.getParameter("action");
 
         if ("login".equals(action)) {
-            String username = request.getParameter("username");
-            String password = request.getParameter("password");
+            String username = request.getParameter("username") != null ? request.getParameter("username").trim() : null;
+            String password = request.getParameter("password") != null ? request.getParameter("password").trim() : null;
             
             Student student = studentDAO.authenticate(username, password);
             if (student != null) {
@@ -41,10 +41,10 @@ public class StudentAuthServlet extends HttpServlet {
             }
         } else if ("register".equals(action)) {
             Student student = new Student();
-            student.setUsername(request.getParameter("username"));
-            student.setPassword(request.getParameter("password"));
-            student.setName(request.getParameter("name"));
-            student.setRoomNo(request.getParameter("roomNo"));
+            student.setUsername(request.getParameter("username") != null ? request.getParameter("username").trim() : null);
+            student.setPassword(request.getParameter("password") != null ? request.getParameter("password").trim() : null);
+            student.setName(request.getParameter("name") != null ? request.getParameter("name").trim() : null);
+            student.setRoomNo(request.getParameter("roomNo") != null ? request.getParameter("roomNo").trim() : null);
             student.setHostelId(Integer.parseInt(request.getParameter("hostelId")));
 
             if (studentDAO.register(student)) {
