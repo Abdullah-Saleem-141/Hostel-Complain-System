@@ -110,6 +110,7 @@ public class ComplaintDAO {
         c.setUrgency(rs.getString("urgency"));
         c.setAdminConfirmed(rs.getBoolean("admin_confirmed"));
         c.setStudentConfirmed(rs.getBoolean("student_confirmed"));
+        c.setAdminComment(rs.getString("admin_comment"));
         c.setCreatedAt(rs.getTimestamp("created_at"));
         c.setResolvedAt(rs.getTimestamp("resolved_at"));
         return c;
@@ -286,5 +287,19 @@ public class ComplaintDAO {
             e.printStackTrace();
         }
         return complaints;
+    }
+
+    public boolean updateAdminComment(int complaintId, String comment) {
+        boolean isSuccess = false;
+        String sql = "UPDATE complaints SET admin_comment = ? WHERE id = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, comment);
+            stmt.setInt(2, complaintId);
+            isSuccess = stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return isSuccess;
     }
 }

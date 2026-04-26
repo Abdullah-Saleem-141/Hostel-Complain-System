@@ -213,6 +213,18 @@
                                         <% if(isSuperAdmin) { %>
                                             <div class="mb-2"><span class="badge bg-secondary rounded-pill"><i class="bi bi-buildings me-1"></i><%= c.getHostelName() %></span></div>
                                         <% } %>
+                                        
+                                        <!-- Admin Comment Section -->
+                                        <div class="mt-3 pt-3 border-top">
+                                            <label class="form-label fw-bold small text-muted"><i class="bi bi-chat-left-text me-1"></i> Admin Comment</label>
+                                            <form action="updateComplaint" method="POST" class="d-flex gap-2">
+                                                <input type="hidden" name="action" value="admin_comment">
+                                                <input type="hidden" name="complaintId" value="<%= c.getId() %>">
+                                                <input type="text" name="comment" class="form-control form-control-sm rounded-3" 
+                                                       placeholder="Add a note..." value="<%= c.getAdminComment() != null ? c.getAdminComment() : "" %>">
+                                                <button type="submit" class="btn btn-sm btn-primary rounded-3 px-3">Save</button>
+                                            </form>
+                                        </div>
                                     </div>
                                     <div class="card-footer bg-transparent border-top-0 pb-4">
                                         <div class="d-grid gap-2">

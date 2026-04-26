@@ -36,6 +36,10 @@ public class UpdateComplaintServlet extends HttpServlet {
                 String adminUsername = (String) request.getSession().getAttribute("adminUsername");
                 success = complaintDAO.deleteComplaint(complaintId, adminUsername != null ? adminUsername : "Unknown Admin");
                 if (!isAjax) response.sendRedirect("dashboard.jsp?msg=Complaint deleted successfully");
+            } else if ("admin_comment".equals(action)) {
+                String comment = request.getParameter("comment");
+                success = complaintDAO.updateAdminComment(complaintId, comment);
+                if (!isAjax) response.sendRedirect("dashboard.jsp?msg=Comment updated successfully");
             }
         }
 

@@ -63,6 +63,7 @@ CREATE TABLE complaints (
     urgency VARCHAR(20) DEFAULT 'Medium', -- Added urgency level
     admin_confirmed BOOLEAN DEFAULT FALSE,
     student_confirmed BOOLEAN DEFAULT FALSE,
+    admin_comment TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     resolved_at TIMESTAMP
 );

@@ -19,6 +19,7 @@ public class Complaint {
     private String urgency;
     private Timestamp createdAt;
     private Timestamp resolvedAt;
+    private String adminComment;
 
     // Getters and Setters
 
@@ -57,4 +58,7 @@ public class Complaint {
 
     public Timestamp getResolvedAt() { return resolvedAt; }
     public void setResolvedAt(Timestamp resolvedAt) { this.resolvedAt = resolvedAt; }
+
+    public String getAdminComment() { return adminComment; }
+    public void setAdminComment(String adminComment) { this.adminComment = adminComment; }
 }

@@ -176,6 +176,12 @@
                                                             else if ("Medium".equals(c.getUrgency())) urgencyClass = "bg-warning text-dark";
                                                         %>
                                                         <span class="badge <%= urgencyClass %>" style="font-size: 0.7rem;"><%= c.getUrgency() %></span>
+                                                        <% if (c.getAdminComment() != null && !c.getAdminComment().isEmpty()) { %>
+                                                            <div class="mt-2 p-2 rounded bg-light border-start border-primary border-4" style="font-size: 0.85rem;">
+                                                                <strong class="text-primary"><i class="bi bi-info-circle me-1"></i>Admin Note:</strong> 
+                                                                <span class="text-dark"><%= c.getAdminComment() %></span>
+                                                            </div>
+                                                        <% } %>
                                                     </td>
                                                     <td>
                                                         <% if (c.isStudentConfirmed()) { %>
